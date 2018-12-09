@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>GiphyAPI</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet">
+</head>
+
+<body>
+  <h1>GifTastic Animals</h1>
+  <p id="instr">Add an animal</p>
+  <input type="text" name="searchAnimal" placeholder="Search Giphy" id="searchText">
+  <input type="submit" value="Submit" id="submitButton">
+  <br>
+  <br>
+  <div id=btns>
+    <!-- <button data-animal=""></button>
+  <button data-animal="Guinea Pig">Guinea Pig</button>
+  <button data-animal="Hedgehog">Hedgehog</button> -->
+  </div>
+
+
+
+
+  <div id="gifs">
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      // Event listener for all button elements
+      $("#btns").on("click", "button", function () {
+        //  "this" refers to the button that was clicked
+        var animal = $(this).attr("data-animal");
+
+        // URL to search Giphy for the animal
+        var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+          animal + "&api_key=rQ7EBRCVC7XMvkBAKGUnW9xET0nwwC4V&limit=10";
+
+        // AJAX GET request
+        $.ajax({
+          url: queryURL,
+          method: "GET"
+        })
+          // After the data comes back from the API
+          .then(function (response) {
+            // Storing an array of results in the results variable
+            var results = response.data;
+            console.log(results);
+
+            // Looping over every result item
+            for (var i = 0; i < results.length; i++) {
+
+              // Only taking action if the photo has an appropriate rating
+              if (results[i].rating !== "r") {
+                // Creating a div for the gif
+                var gifDiv = $("<div>");
+
+                // Storing the result item's rating
+                var rating = results[i].rating;
+
+                // Creating a paragraph tag with the result item's rating
+                var p = $("<p>").text("Rating: " + rating);
+
+                // Creating an image tag
+                var animalImage = $("<img>");
+
+                // Giving the image tag an src attribute of a proprty pulled off the result item
+
+                animalImage.attr("src", results[i].images.original_still.url);
+                animalImage.attr("data-animate", results[i].images.original.url);
+                animalImage.attr("data-still", results[i].images.original_still.url);
+                animalImage.attr("data-state", "still");
+
+                // Append the paragraph and animalImage to the "gifDiv" div 
+                gifDiv.append(p);
+                gifDiv.append(animalImage);
+
+                // Prepend the gifDiv to the "#gifs" div in the HTML
+                $("#gifs").prepend(gifDiv);
+              }
+
+              // Make new animal buttons using the search box
+              
+            }
+          });
+
+      });
+
+      $("#gifs").on("click", "img", function (event) {
+        var state = $(this).attr("data-state");
+        console.log(state);
+        if (state === "still") {
+          $(this).attr("src", $(this).attr("data-animate"));
+          $(this).attr("data-state", "animate");
+        } else if (state === "animate") {
+          $(this).attr("src", $(this).attr("data-still"));
+          $(this).attr("data-state", "still");
+        }
+      })
+
+      $("#submitButton").on("click", function () {
+       animals.push($("#searchText").val().trim())
+       showAnimalButtons() 
+      });
+
+
+      // functions do not go above this line
+      function showAnimalButtons() {
+        $("#btns").empty()
+        var animalButtons = [];
+        for (var i = 0; i < animals.length; i++) {
+          var animalButton = getAnimalButton(animals[i]);
+          animalButtons.push(animalButton)
+        }
+        $("#btns").append(animalButtons);
+      }
+      function getAnimalButton(animal) {
+        console.log(animal);
+        var animalButton = $('<button data-animal="' + animal + '">' + animal + '</button>')
+        return animalButton;
+      }
+      // global variables
+      var animals = ["pig", "guinea pig", "hedgehog"];
+
+
+      showAnimalButtons()
+
+      // NO CODE BELOW THIS LINE
+
+    });
+
+
+
+  </script>
+</body>
+
+</html>
