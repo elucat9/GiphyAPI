@@ -16,9 +16,7 @@
   <br>
   <br>
   <div id=btns>
-    <!-- <button data-animal=""></button>
-  <button data-animal="Guinea Pig">Guinea Pig</button>
-  <button data-animal="Hedgehog">Hedgehog</button> -->
+   
   </div>
 
 
@@ -30,12 +28,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script type="text/javascript">
     $(document).ready(function () {
-      // Event listener for all button elements
+      // Event listener for the buttons
       $("#btns").on("click", "button", function () {
-        //  "this" refers to the button that was clicked
+        //  "this" is the button being clicked
         var animal = $(this).attr("data-animal");
 
-        // URL to search Giphy for the animal
+        // search for animal in Giphy API
         var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
           animal + "&api_key=rQ7EBRCVC7XMvkBAKGUnW9xET0nwwC4V&limit=10";
 
@@ -44,45 +42,38 @@
           url: queryURL,
           method: "GET"
         })
-          // After the data comes back from the API
+          // store the results we got back from Giphy API into a variable
           .then(function (response) {
-            // Storing an array of results in the results variable
             var results = response.data;
             console.log(results);
 
-            // Looping over every result item
+            // Loop the results
             for (var i = 0; i < results.length; i++) {
 
-              // Only taking action if the photo has an appropriate rating
-              if (results[i].rating !== "r") {
-                // Creating a div for the gif
+              // filter out results with inappropriate ratings, only return if gif's rating NOT EQUALS to "r",
+              // display the rating with the gif returned
+              if (results[i].rating !== "r") { 
                 var gifDiv = $("<div>");
-
-                // Storing the result item's rating
                 var rating = results[i].rating;
-
-                // Creating a paragraph tag with the result item's rating
                 var p = $("<p>").text("Rating: " + rating);
-
-                // Creating an image tag
                 var animalImage = $("<img>");
 
-                // Giving the image tag an src attribute of a proprty pulled off the result item
+                // src attribute - the gif should be still, and it animates when clicked on
 
                 animalImage.attr("src", results[i].images.original_still.url);
                 animalImage.attr("data-animate", results[i].images.original.url);
                 animalImage.attr("data-still", results[i].images.original_still.url);
                 animalImage.attr("data-state", "still");
 
-                // Append the paragraph and animalImage to the "gifDiv" div 
+              
                 gifDiv.append(p);
                 gifDiv.append(animalImage);
 
-                // Prepend the gifDiv to the "#gifs" div in the HTML
+              
                 $("#gifs").prepend(gifDiv);
               }
 
-              // Make new animal buttons using the search box
+             
               
             }
           });
@@ -101,13 +92,15 @@
         }
       })
 
+      //create new buttons using the input box
+
       $("#submitButton").on("click", function () {
        animals.push($("#searchText").val().trim())
        showAnimalButtons() 
       });
 
 
-      // functions do not go above this line
+     
       function showAnimalButtons() {
         $("#btns").empty()
         var animalButtons = [];
@@ -128,7 +121,7 @@
 
       showAnimalButtons()
 
-      // NO CODE BELOW THIS LINE
+      
 
     });
 
